@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Plant recommendations{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('index') }}">← Back to my garden</a>
+<section class="detail-hero"><div class="plant-avatar large">🌿</div><div><p class="eyebrow">PERSONALISED CARE SUGGESTIONS</p><h1>{{ observation.plant_name }}</h1><p class="hero-copy">Observation on {{ observation.observation_date }} · {{ observation.location }}{% if observation.plant_species %} · {{ observation.plant_species }}{% endif %}</p></div></section>
+<section class="detail-grid"><div class="panel"><p class="eyebrow">YOUR INPUTS</p><h2>Observation details</h2><div class="detail-metrics">
+<div><span>Colour / appearance</span><strong>{{ observation.colour }}</strong></div><div><span>Height</span><strong>{% if observation.height_cm is not none %}{{ observation.height_cm }} cm{% else %}Not recorded{% endif %}</strong></div>
+<div><span>Sunlight</span><strong>{% if observation.sunlight_hours is not none %}{{ observation.sunlight_hours }} hours/day{% else %}Not recorded{% endif %}</strong></div><div><span>Watering</span><strong>{{ observation.watering_frequency or 'Not recorded' }}</strong></div>
+<div><span>Soil condition</span><strong>{{ observation.soil_condition or 'Not recorded' }}</strong></div><div><span>Location</span><strong>{{ observation.location }}</strong></div>
+<div class="wide"><span>Notes</span><strong class="notes-value">{{ observation.notes or 'No extra notes' }}</strong></div></div>
+<form action="{{ url_for('delete_observation', observation_id=observation.id) }}" method="post" onsubmit="return confirm('Delete this observation?');"><button class="button danger" type="submit">Delete this observation</button></form></div>
+<div class="recommendations"><p class="eyebrow">GARDEN ASSISTANT</p><h2>Why it may be happening</h2><p class="muted">Suggestions are generated from the colour, height history, sunlight, watering, soil, and location you entered.</p>
+{% for rec in recs %}<article class="recommendation"><div class="rec-icon">✦</div><div><span class="priority">{{ rec.priority }}</span><h3>{{ rec.title }}</h3><p class="reason"><strong>Possible reason:</strong> {{ rec.reason }}</p><p><strong>What to do:</strong> {{ rec.action }}</p></div></article>{% endfor %}
+<div class="disclaimer">These are possible explanations, not a definitive diagnosis. Plant species and local conditions matter. If symptoms spread rapidly or the plant is severely damaged, seek advice from a local horticulture expert.</div>
+</div></section>
+<section class="panel history-panel"><p class="eyebrow">TRACK THE CHANGE</p><h2>Observation history</h2><div class="history-table-wrap"><table><thead><tr><th>Date</th><th>Colour</th><th>Height</th><th>Sunlight</th><th>Watering</th><th>Soil</th><th>Location</th></tr></thead><tbody>{% for item in history %}<tr><td>{{ item.observation_date }}</td><td>{{ item.colour }}</td><td>{% if item.height_cm is not none %}{{ item.height_cm }} cm{% else %}—{% endif %}</td><td>{% if item.sunlight_hours is not none %}{{ item.sunlight_hours }} h{% else %}—{% endif %}</td><td>{{ item.watering_frequency or '—' }}</td><td>{{ item.soil_condition or '—' }}</td><td>{{ item.location }}</td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}
